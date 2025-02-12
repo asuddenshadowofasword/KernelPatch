@@ -18,7 +18,7 @@ static inline long hash_key(const char *key)
 #define SUPERCALL_HELLO_ECHO "hello1158"
 
 // #define __NR_supercall __NR3264_truncate // 45
-#define __NR_supercall 45
+#define __NR_supercall 46
 
 #define SUPERCALL_HELLO 0x1000
 #define SUPERCALL_KLOG 0x1004
@@ -94,7 +94,7 @@ struct su_profile
 
 #define SU_PATH_MAX_LEN 128
 
-#define SUPERCMD "/system/bin/truncate"
+#define SUPERCMD "/system/bin/ftruncate"
 
 #define SAFE_MODE_FLAG_FILE "/dev/.safemode"
 
