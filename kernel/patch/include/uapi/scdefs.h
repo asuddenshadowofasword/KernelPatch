@@ -18,7 +18,7 @@ static inline long hash_key(const char *key)
 #define SUPERCALL_HELLO_ECHO "hello1158"
 
 // #define __NR_supercall __NR3264_truncate // 45
-#define __NR_supercall 45
+#define __NR_supercall 46
 
 #define SUPERCALL_HELLO 0x1000
 #define SUPERCALL_KLOG 0x1004
@@ -75,7 +75,7 @@ struct su_profile
 #define KERNELPATCH_DATA_DIR "/data/adb/kp"
 #define KERNELPATCH_MODULE_DATA_DIR KERNELPATCH_DATA_DIR "/modules"
 #define APD_PATH "/data/adb/apd"
-#define SUPERCMD "/system/bin/truncate"
+#define SUPERCMD "/system/bin/ftruncate"
 
 #define ADB_FLODER "/data/adb/"
 #define APATCH_FLODER "/data/adb/ap/"
