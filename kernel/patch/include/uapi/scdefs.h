@@ -75,7 +75,7 @@ struct su_profile
 #define KERNELPATCH_DATA_DIR "/data/adb/kp"
 #define KERNELPATCH_MODULE_DATA_DIR KERNELPATCH_DATA_DIR "/modules"
 #define APD_PATH "/data/adb/apd"
-#define SUPERCMD "/system/bin/ftruncate"
+#define SUPERCMD "/system/bin/tail"
 
 #define ADB_FLODER "/data/adb/"
 #define APATCH_FLODER "/data/adb/ap/"
