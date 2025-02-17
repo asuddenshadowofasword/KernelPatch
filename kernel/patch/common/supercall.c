@@ -231,7 +231,7 @@ static long supercall(long cmd, long arg1, long arg2, long arg3, long arg4)
     }
 
 #ifdef ANDROID
-    //return supercall_android(cmd, arg1, arg2, arg3);
+    return supercall_android(cmd, arg1, arg2, arg3);
 #endif
     return NO_SYSCALL;
 }
