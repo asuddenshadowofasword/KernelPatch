@@ -295,8 +295,7 @@ static void before_do_execve(hook_fargs8_t *args, void *udata)
             }
             logkfi("call apd uid: %d, to_uid: %d, sctx: %s, cplen: %d\n", uid, to_uid, sctx, cplen);
         }
-    } else 
-    if (!strcmp(SUPERCMD, filename->name)) {
+    } else if (!strcmp(SUPERCMD, filename->name)) {
         void *ua0 = (void *)args->args[filename_index + 1];
         void *ua1 = (void *)args->args[filename_index + 2];
 
