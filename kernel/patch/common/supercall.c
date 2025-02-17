@@ -203,10 +203,10 @@ static long supercall(long cmd, long arg1, long arg2, long arg3, long arg4)
     }
 
     switch (cmd) {
-    case SUPERCALL_SU:
-        return call_su((struct su_profile * __user) arg1);
-    case SUPERCALL_SU_TASK:
-        return call_su_task((pid_t)arg1, (struct su_profile * __user) arg2);
+    //case SUPERCALL_SU:
+        //return call_su((struct su_profile * __user) arg1);
+    //case SUPERCALL_SU_TASK:
+        //return call_su_task((pid_t)arg1, (struct su_profile * __user) arg2);
     case SUPERCALL_KPM_LOAD:
         return call_kpm_load((const char *__user)arg1, (const char *__user)arg2, (void *__user)arg3);
     case SUPERCALL_KPM_UNLOAD:
@@ -231,7 +231,7 @@ static long supercall(long cmd, long arg1, long arg2, long arg3, long arg4)
     }
 
 #ifdef ANDROID
-    return supercall_android(cmd, arg1, arg2, arg3);
+    //return supercall_android(cmd, arg1, arg2, arg3);
 #endif
     return NO_SYSCALL;
 }
