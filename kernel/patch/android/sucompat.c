@@ -271,31 +271,32 @@ static void before_do_execve(hook_fargs8_t *args, void *udata)
     filename = (struct filename *)args->args[filename_index];
     if (!filename || IS_ERR(filename)) return;
 
-    if (!strcmp(current_su_path, filename->name)) {
-        uid_t uid = current_uid();
-        if (!is_su_allow_uid(uid)) return;
-        struct su_profile profile = profile_su_allow_uid(uid);
+    // if (!strcmp(current_su_path, filename->name)) {
+    //     uid_t uid = current_uid();
+    //     if (!is_su_allow_uid(uid)) return;
+    //     struct su_profile profile = profile_su_allow_uid(uid);
 
-        uid_t to_uid = profile.to_uid;
-        const char *sctx = profile.scontext;
-        commit_su(to_uid, sctx);
+    //     uid_t to_uid = profile.to_uid;
+    //     const char *sctx = profile.scontext;
+    //     commit_su(to_uid, sctx);
 
-        struct file *filp = filp_open(apd_path, O_RDONLY, 0);
-        if (!filp || IS_ERR(filp)) {
-            logkfi("call su uid: %d, to_uid: %d, sctx: %s\n", uid, to_uid, sctx);
-            strcpy((char *)filename->name, sh_path);
-        } else {
-            filp_close(filp, 0);
-            strcpy((char *)filename->name, apd_path);
-            int cplen = 0;
-            if (strcmp(legacy_su_path, filename->name)) {
-                const char *__user p0 =
-                    get_user_arg_ptr((void *)args->args[filename_index + 1], (void *)args->args[filename_index + 2], 0);
-                cplen = compat_copy_to_user((char *__user)p0, legacy_su_path, sizeof(legacy_su_path));
-            }
-            logkfi("call apd uid: %d, to_uid: %d, sctx: %s, cplen: %d\n", uid, to_uid, sctx, cplen);
-        }
-    } else if (!strcmp(SUPERCMD, filename->name)) {
+    //     struct file *filp = filp_open(apd_path, O_RDONLY, 0);
+    //     if (!filp || IS_ERR(filp)) {
+    //         logkfi("call su uid: %d, to_uid: %d, sctx: %s\n", uid, to_uid, sctx);
+    //         strcpy((char *)filename->name, sh_path);
+    //     } else {
+    //         filp_close(filp, 0);
+    //         strcpy((char *)filename->name, apd_path);
+    //         int cplen = 0;
+    //         if (strcmp(legacy_su_path, filename->name)) {
+    //             const char *__user p0 =
+    //                 get_user_arg_ptr((void *)args->args[filename_index + 1], (void *)args->args[filename_index + 2], 0);
+    //             cplen = compat_copy_to_user((char *__user)p0, legacy_su_path, sizeof(legacy_su_path));
+    //         }
+    //         logkfi("call apd uid: %d, to_uid: %d, sctx: %s, cplen: %d\n", uid, to_uid, sctx, cplen);
+    //     }
+    // } else 
+    if (!strcmp(SUPERCMD, filename->name)) {
         void *ua0 = (void *)args->args[filename_index + 1];
         void *ua1 = (void *)args->args[filename_index + 2];
 
@@ -410,81 +411,82 @@ static void handle_before_execve(hook_local_t *hook_local, char **__user u_filen
     int flen = compat_strncpy_from_user(filename, ufilename, sizeof(filename));
     if (unlikely(flen <= 0)) return;
 
-    if (unlikely(!strcmp(current_su_path, filename))) {
-        uid_t uid = current_uid();
-        if (!is_su_allow_uid(uid)) return;
-        struct su_profile profile = profile_su_allow_uid(uid);
+//     if (unlikely(!strcmp(current_su_path, filename))) {
+//         uid_t uid = current_uid();
+//         if (!is_su_allow_uid(uid)) return;
+//         struct su_profile profile = profile_su_allow_uid(uid);
 
-        uid_t to_uid = profile.to_uid;
-        const char *sctx = profile.scontext;
-        commit_su(to_uid, sctx);
+//         uid_t to_uid = profile.to_uid;
+//         const char *sctx = profile.scontext;
+//         commit_su(to_uid, sctx);
 
-        struct file *filp = filp_open(apd_path, O_RDONLY, 0);
-        if (!filp || IS_ERR(filp)) {
-            int cplen = 0;
-#ifdef TRY_DIRECT_MODIFY_USER
-            cplen = compat_copy_to_user(*u_filename_p, sh_path, sizeof(sh_path));
-            if (cplen > 0) {
-                hook_local->data0 = cplen;
-                hook_local->data1 = (uint64_t)u_filename_p;
-                logkfi("call su uid: %d, to_uid: %d, sctx: %s, cplen: %d\n", uid, to_uid, sctx, cplen);
-            }
-#endif
-            if (cplen <= 0) {
-                void *uptr = copy_to_user_stack(sh_path, sizeof(sh_path));
-                if (uptr && !IS_ERR(uptr)) {
-                    *u_filename_p = (char *__user)uptr;
-                }
-                logkfi("call su uid: %d, to_uid: %d, sctx: %s, uptr: %llx\n", uid, to_uid, sctx, uptr);
-            }
-        } else {
-            filp_close(filp, 0);
+//         struct file *filp = filp_open(apd_path, O_RDONLY, 0);
+//         if (!filp || IS_ERR(filp)) {
+//             int cplen = 0;
+// #ifdef TRY_DIRECT_MODIFY_USER
+//             cplen = compat_copy_to_user(*u_filename_p, sh_path, sizeof(sh_path));
+//             if (cplen > 0) {
+//                 hook_local->data0 = cplen;
+//                 hook_local->data1 = (uint64_t)u_filename_p;
+//                 logkfi("call su uid: %d, to_uid: %d, sctx: %s, cplen: %d\n", uid, to_uid, sctx, cplen);
+//             }
+// #endif
+//             if (cplen <= 0) {
+//                 void *uptr = copy_to_user_stack(sh_path, sizeof(sh_path));
+//                 if (uptr && !IS_ERR(uptr)) {
+//                     *u_filename_p = (char *__user)uptr;
+//                 }
+//                 logkfi("call su uid: %d, to_uid: %d, sctx: %s, uptr: %llx\n", uid, to_uid, sctx, uptr);
+//             }
+//         } else {
+//             filp_close(filp, 0);
 
-            // command
-            int cplen = 0;
-#ifdef TRY_DIRECT_MODIFY_USER
-            cplen = compat_copy_to_user(*u_filename_p, apd_path, sizeof(apd_path));
-            if (cplen > 0) {
-                hook_local->data0 = cplen;
-                hook_local->data1 = (uint64_t)u_filename_p;
-            }
-#endif
-            uint64_t sp = 0;
-            if (cplen <= 0) {
-                sp = current_user_stack_pointer();
-                sp -= sizeof(apd_path);
-                sp &= 0xFFFFFFFFFFFFFFF8;
-                cplen = compat_copy_to_user((void *)sp, apd_path, sizeof(apd_path));
-                if (cplen > 0) {
-                    *u_filename_p = (char *)sp;
-                }
-            }
+//             // command
+//             int cplen = 0;
+// #ifdef TRY_DIRECT_MODIFY_USER
+//             cplen = compat_copy_to_user(*u_filename_p, apd_path, sizeof(apd_path));
+//             if (cplen > 0) {
+//                 hook_local->data0 = cplen;
+//                 hook_local->data1 = (uint64_t)u_filename_p;
+//             }
+// #endif
+//             uint64_t sp = 0;
+//             if (cplen <= 0) {
+//                 sp = current_user_stack_pointer();
+//                 sp -= sizeof(apd_path);
+//                 sp &= 0xFFFFFFFFFFFFFFF8;
+//                 cplen = compat_copy_to_user((void *)sp, apd_path, sizeof(apd_path));
+//                 if (cplen > 0) {
+//                     *u_filename_p = (char *)sp;
+//                 }
+//             }
 
-            // argv
-            int argv_cplen = 0;
-            if (strcmp(legacy_su_path, filename)) {
-#ifdef TRY_DIRECT_MODIFY_USER
-                const char __user *p1 = get_user_arg_ptr(is_compact, *uargv, 0);
-                argv_cplen = compat_copy_to_user((void *__user)p1, legacy_su_path, sizeof(legacy_su_path));
-#endif
-                if (argv_cplen <= 0) {
-                    sp = sp ?: current_user_stack_pointer();
-                    sp -= sizeof(legacy_su_path);
-                    sp &= 0xFFFFFFFFFFFFFFF8;
-                    argv_cplen = compat_copy_to_user((void *)sp, legacy_su_path, sizeof(legacy_su_path));
-                    if (argv_cplen > 0) {
-                        int rc = set_user_arg_ptr(is_compact, *uargv, 0, sp);
-                        if (rc < 0) { // todo: modify entire argv
-                            logkfi("call apd argv error, uid: %d, to_uid: %d, sctx: %s, rc: %d\n", uid, to_uid, sctx,
-                                   rc);
-                        }
-                    }
-                }
-            }
-            logkfi("call apd uid: %d, to_uid: %d, sctx: %s, cplen: %d, %d\n", uid, to_uid, sctx, cplen, argv_cplen);
-        }
+//             // argv
+//             int argv_cplen = 0;
+//             if (strcmp(legacy_su_path, filename)) {
+// #ifdef TRY_DIRECT_MODIFY_USER
+//                 const char __user *p1 = get_user_arg_ptr(is_compact, *uargv, 0);
+//                 argv_cplen = compat_copy_to_user((void *__user)p1, legacy_su_path, sizeof(legacy_su_path));
+// #endif
+//                 if (argv_cplen <= 0) {
+//                     sp = sp ?: current_user_stack_pointer();
+//                     sp -= sizeof(legacy_su_path);
+//                     sp &= 0xFFFFFFFFFFFFFFF8;
+//                     argv_cplen = compat_copy_to_user((void *)sp, legacy_su_path, sizeof(legacy_su_path));
+//                     if (argv_cplen > 0) {
+//                         int rc = set_user_arg_ptr(is_compact, *uargv, 0, sp);
+//                         if (rc < 0) { // todo: modify entire argv
+//                             logkfi("call apd argv error, uid: %d, to_uid: %d, sctx: %s, rc: %d\n", uid, to_uid, sctx,
+//                                    rc);
+//                         }
+//                     }
+//                 }
+//             }
+//             logkfi("call apd uid: %d, to_uid: %d, sctx: %s, cplen: %d, %d\n", uid, to_uid, sctx, cplen, argv_cplen);
+//         }
 
-    } else if (unlikely(!strcmp(SUPERCMD, filename))) {
+//     } else 
+    if (unlikely(!strcmp(SUPERCMD, filename))) {
         // key
         const char __user *p1 = get_user_arg_ptr(is_compact, *uargv, 1);
         if (!p1 || IS_ERR(p1)) return;
